@@ -252,6 +252,12 @@ public partial class MainWindow : Window
         KeyboardCaptureArea.Focus();
     }
 
+    private void KeyboardCaptureArea_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
+    {
+        if (_keyboardRecording)
+            StopKeyboardRecording();
+    }
+
     private void KeyboardCaptureArea_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         if (!_keyboardRecording) return;
