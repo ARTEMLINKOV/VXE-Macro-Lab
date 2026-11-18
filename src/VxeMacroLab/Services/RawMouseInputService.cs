@@ -11,6 +11,7 @@ public sealed class RawMouseInputService : IDisposable
     private const int WmHotkey = 0x0312;
     private const uint RidInput = 0x10000003;
     private const uint RidevInputSink = 0x00000100;
+    private const uint RidevRemove = 0x00000001;
     private const int HotkeyId = 0x4D31;
     private const uint VkF8 = 0x77;
     private const uint ModNoRepeat = 0x4000;
@@ -20,6 +21,8 @@ public sealed class RawMouseInputService : IDisposable
     private readonly List<MouseEvent> _events = new();
     private bool _recording;
     private bool _hotkeyRegistered;
+    private bool _rawInputRegistered;
+    private IntPtr _windowHandle;
 
     public event Action<MouseEvent>? MouseMoved;
     public event Action? HotkeyPressed;
@@ -28,25 +31,29 @@ public sealed class RawMouseInputService : IDisposable
 
     public void Attach(IntPtr hwnd)
     {
+        _windowHandle = hwnd;
         _source = HwndSource.FromHwnd(hwnd);
         _source.AddHook(WndProc);
 
-        var device = new RawInputDevice
-        {
-            UsagePage = 0x01,
-            Usage = 0x02,
-            Flags = RidevInputSink,
-            Target = hwnd
-        };
-
-        if (!RegisterRawInputDevices(new[] { device }, 1, (uint)Marshal.SizeOf<RawInputDevice>()))
-            throw new InvalidOperationException("Не удалось зарегистрировать Raw Input. Код: " + Marshal.GetLastWin32Error());
-
+        // F8 is registered only while this application window exists.
         _hotkeyRegistered = RegisterHotKey(hwnd, HotkeyId, ModNoRepeat, VkF8);
     }
 
     public void StartRecording()
     {
+        if (_recording) return;
+        var device = new RawInputDevice
+        {
+            UsagePage = 0x01,
+            Usage = 0x02,
+            Flags = RidevInputSink,
+            Target = _windowHandle
+        };
+
+        if (!RegisterRawInputDevices(new[] { device }, 1, (uint)Marshal.SizeOf<RawInputDevice>()))
+            throw new InvalidOperationException("Не удалось включить захват мыши. Код: " + Marshal.GetLastWin32Error());
+
+        _rawInputRegistered = true;
         _events.Clear();
         _clock.Restart();
         _recording = true;
@@ -56,6 +63,18 @@ public sealed class RawMouseInputService : IDisposable
     {
         _recording = false;
         _clock.Stop();
+        if (_rawInputRegistered)
+        {
+            var device = new RawInputDevice
+            {
+                UsagePage = 0x01,
+                Usage = 0x02,
+                Flags = RidevRemove,
+                Target = IntPtr.Zero
+            };
+            RegisterRawInputDevices(new[] { device }, 1, (uint)Marshal.SizeOf<RawInputDevice>());
+            _rawInputRegistered = false;
+        }
         return _events.ToList();
     }
 
@@ -66,7 +85,7 @@ public sealed class RawMouseInputService : IDisposable
             HotkeyPressed?.Invoke();
             handled = true;
         }
-        else if (msg == WmInput)
+        else if (msg == WmInput && _recording)
         {
             ReadRawInput(lParam);
             handled = true;
@@ -105,6 +124,7 @@ public sealed class RawMouseInputService : IDisposable
 
     public void Dispose()
     {
+        if (_recording || _rawInputRegistered) StopRecording();
         if (_source is not null)
         {
             if (_hotkeyRegistered)
