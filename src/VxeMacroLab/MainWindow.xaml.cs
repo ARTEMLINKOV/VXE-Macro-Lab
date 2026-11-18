@@ -20,6 +20,7 @@ public partial class MainWindow : Window
         Loaded += (_, _) => DrawPath();
         SizeChanged += (_, _) => DrawPath();
         _input.HotkeyPressed += ToggleRecording;
+        _input.MouseMoved += _ => UpdateCount();
     }
 
     protected override void OnSourceInitialized(EventArgs e)
