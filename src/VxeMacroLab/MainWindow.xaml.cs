@@ -99,9 +99,9 @@ public partial class MainWindow : Window
         var dialog = new SaveFileDialog
         {
             Title = "Сохранить профиль мыши",
-            Filter = "Профиль мыши (*.mouse.json)|*.mouse.json",
-            FileName = "mouse-profile.mouse.json",
-            DefaultExt = ".mouse.json"
+            Filter = "Защищённый профиль VXE (*.vxeprofile)|*.vxeprofile|Старый JSON (*.json)|*.json",
+            FileName = "mouse-profile.vxeprofile",
+            DefaultExt = ".vxeprofile"
         };
         if (dialog.ShowDialog() != true) return;
 
@@ -110,8 +110,7 @@ public partial class MainWindow : Window
             Name = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName),
             Events = _mouseEvents.ToList()
         };
-        File.WriteAllText(dialog.FileName,
-            JsonSerializer.Serialize(profile, new JsonSerializerOptions { WriteIndented = true }));
+        ProfileProtectionService.Save(dialog.FileName, profile);
         StatusText.Text = "Профиль мыши сохранён";
     }
 
@@ -120,14 +119,13 @@ public partial class MainWindow : Window
         var dialog = new OpenFileDialog
         {
             Title = "Загрузить профиль мыши",
-            Filter = "Профиль мыши (*.mouse.json)|*.mouse.json|JSON (*.json)|*.json"
+            Filter = "Профиль VXE (*.vxeprofile)|*.vxeprofile|Старый JSON (*.json)|*.json"
         };
         if (dialog.ShowDialog() != true) return;
 
         try
         {
-            var profile = JsonSerializer.Deserialize<MacroProfile>(File.ReadAllText(dialog.FileName))
-                ?? throw new InvalidDataException("Файл профиля мыши пуст или повреждён.");
+            var profile = ProfileProtectionService.Load<MacroProfile>(dialog.FileName);
             _mouseEvents.Clear();
             _mouseEvents.AddRange(profile.Events ?? new List<MouseEvent>());
             StatusText.Text = $"Загружен профиль мыши: {profile.Name}";
@@ -319,9 +317,9 @@ public partial class MainWindow : Window
         var dialog = new SaveFileDialog
         {
             Title = "Сохранить профиль клавиатуры",
-            Filter = "Профиль клавиатуры (*.keyboard.json)|*.keyboard.json",
-            FileName = "keyboard-profile.keyboard.json",
-            DefaultExt = ".keyboard.json"
+            Filter = "Защищённый профиль VXE (*.vxeprofile)|*.vxeprofile|Старый JSON (*.json)|*.json",
+            FileName = "keyboard-profile.vxeprofile",
+            DefaultExt = ".vxeprofile"
         };
         if (dialog.ShowDialog() != true) return;
 
@@ -330,8 +328,7 @@ public partial class MainWindow : Window
             Name = System.IO.Path.GetFileNameWithoutExtension(dialog.FileName),
             Events = _keyboardEvents.ToList()
         };
-        File.WriteAllText(dialog.FileName,
-            JsonSerializer.Serialize(profile, new JsonSerializerOptions { WriteIndented = true }));
+        ProfileProtectionService.Save(dialog.FileName, profile);
         StatusText.Text = "Профиль клавиатуры сохранён";
     }
 
@@ -340,14 +337,13 @@ public partial class MainWindow : Window
         var dialog = new OpenFileDialog
         {
             Title = "Загрузить профиль клавиатуры",
-            Filter = "Профиль клавиатуры (*.keyboard.json)|*.keyboard.json|JSON (*.json)|*.json"
+            Filter = "Профиль VXE (*.vxeprofile)|*.vxeprofile|Старый JSON (*.json)|*.json"
         };
         if (dialog.ShowDialog() != true) return;
 
         try
         {
-            var profile = JsonSerializer.Deserialize<KeyboardMacroProfile>(File.ReadAllText(dialog.FileName))
-                ?? throw new InvalidDataException("Файл профиля клавиатуры пуст или повреждён.");
+            var profile = ProfileProtectionService.Load<KeyboardMacroProfile>(dialog.FileName);
             StopKeyboardRecording();
             _keyboardEvents.Clear();
             _keyboardEvents.AddRange(profile.Events ?? new List<KeyboardEvent>());
