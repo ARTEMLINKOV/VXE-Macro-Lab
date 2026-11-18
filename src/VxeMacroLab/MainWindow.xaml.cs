@@ -62,12 +62,22 @@ public partial class MainWindow : Window
         }
         else
         {
-            _mouseEvents.Clear();
-            _mouseInput.StartRecording();
-            MouseRecordButton.Content = "■  Идёт запись";
-            StatusText.Text = "Записываются движения мыши";
-            UpdateMouseCount();
-            MousePreviewCanvas.Children.Clear();
+            try
+            {
+                _mouseEvents.Clear();
+                _mouseInput.StartRecording();
+                MouseRecordButton.Content = "■  Идёт запись";
+                StatusText.Text = "Записываются движения мыши";
+                UpdateMouseCount();
+                MousePreviewCanvas.Children.Clear();
+            }
+            catch (Exception ex)
+            {
+                MouseRecordButton.Content = "●  Начать запись";
+                StatusText.Text = "Не удалось включить захват мыши";
+                MessageBox.Show(ex.Message, "VXE Macro Lab",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 
