@@ -1,20 +1,29 @@
 # VXE Macro Lab
 
-Windows 11 desktop utility for recording and inspecting physical mouse movement.
+Windows 11 desktop utility with two independent input-recording modules: mouse and keyboard.
 
-## Current MVP
+## Current features
 
-- Captures physical mouse deltas using Windows Raw Input while the app is running, including when another window is active.
-- F8 starts and stops recording (global hotkey, if Windows allows it to be registered).
+### Mouse module
+- Captures physical mouse movement using Windows Raw Input, including while another window is active.
+- F8 starts/stops mouse recording when the global hotkey is available.
 - Stores relative X/Y movement and elapsed timestamps.
-- Saves and loads profiles as JSON.
-- Draws the captured path in the app's preview area.
+- Displays a visual trajectory preview.
+- Saves and loads mouse-only JSON profiles.
 
-This version records and visualizes trajectories only. It does not inject synthetic mouse movement into other applications.
+### Keyboard module
+- Records key-down and key-up events, including elapsed timestamps.
+- Keyboard recording is deliberately limited to the focused capture area inside VXE Macro Lab. Click **Start recording** and type in that capture area.
+- Saves and loads keyboard-only JSON profiles.
+- Keyboard profiles are separate from mouse profiles.
+
+## Safety and scope
+
+This application records and visualizes input events. It does not replay or inject synthetic mouse or keyboard input into other applications. Keyboard capture is not a system-wide keystroke logger: it only records input directed to the focused capture area in this app.
 
 ## Requirements
 
-- Windows 11
+- Windows 10/11
 - .NET 8 SDK
 
 ## Build
@@ -27,14 +36,9 @@ dotnet build src/VxeMacroLab/VxeMacroLab.csproj -c Release
 dotnet run --project src/VxeMacroLab/VxeMacroLab.csproj
 ```
 
-## Controls
+## Profile formats
 
-- **F8** — start/stop recording.
-- **Stop** — stop the current recording.
-- **Save profile** — export the captured movement to JSON.
-- **Open profile** — load a saved JSON profile.
-- **Clear** — clear the current trajectory.
+- Mouse: `*.mouse.json`
+- Keyboard: `*.keyboard.json`
 
-## Notes
-
-Raw Input records relative movement reported by Windows for attached mouse devices. It does not identify a specific mouse model or modify mouse firmware.
+The two profile formats are intentionally independent and cannot overwrite each other's event data.
