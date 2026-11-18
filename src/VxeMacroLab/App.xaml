@@ -1,0 +1,9 @@
+<Application x:Class="VxeMacroLab.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <SolidColorBrush x:Key="PanelBrush" Color="#FF20242B"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#FF58A6FF"/>
+    </Application.Resources>
+</Application>
