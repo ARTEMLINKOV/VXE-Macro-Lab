@@ -349,7 +349,8 @@
                                         CornerRadius="10" Padding="10"
                                         PreviewKeyDown="KeyboardCaptureArea_PreviewKeyDown"
                                         PreviewKeyUp="KeyboardCaptureArea_PreviewKeyUp"
-                                        MouseDown="KeyboardCaptureArea_MouseDown">
+                                        MouseDown="KeyboardCaptureArea_MouseDown"
+                                        LostKeyboardFocus="KeyboardCaptureArea_LostKeyboardFocus">
                                     <Grid>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto"/>
