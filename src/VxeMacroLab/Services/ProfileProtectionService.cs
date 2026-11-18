@@ -72,16 +72,16 @@ public static class ProfileProtectionService
 
         byte[] fileBytes = File.ReadAllBytes(path);
         byte[]? plaintext = null;
+        byte[]? protectedPayload = null;
 
         try
         {
             if (fileBytes.Length > Magic.Length &&
                 fileBytes.AsSpan(0, Magic.Length).SequenceEqual(Magic))
             {
+                protectedPayload = fileBytes.AsSpan(Magic.Length).ToArray();
                 plaintext = ProtectedData.Unprotect(
-                    fileBytes.AsSpan(Magic.Length).ToArray(),
-                    Entropy,
-                    DataProtectionScope.CurrentUser);
+                    protectedPayload, Entropy, DataProtectionScope.CurrentUser);
             }
             else
             {
@@ -96,6 +96,7 @@ public static class ProfileProtectionService
         {
             CryptographicOperations.ZeroMemory(fileBytes);
             if (plaintext is not null) CryptographicOperations.ZeroMemory(plaintext);
+            if (protectedPayload is not null) CryptographicOperations.ZeroMemory(protectedPayload);
         }
     }
 }
