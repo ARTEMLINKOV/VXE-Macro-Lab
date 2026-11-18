@@ -372,9 +372,9 @@
             </TabControl>
 
             <Grid Grid.Row="2" Margin="1,15,1,0">
-                <TextBlock Text="Модули независимы · профили мыши и клавиатуры хранятся отдельно"
+                <TextBlock Text="GhostLayer · профили зашифрованы DPAPI · захват мыши только во время записи"
                            Foreground="#667286" FontSize="11" VerticalAlignment="Center"/>
-                <TextBlock Text="Keyboard capture: только когда приложение в фокусе"
+                <TextBlock Text="Без скрытия процесса и обхода системной защиты"
                            Foreground="#667286" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             </Grid>
         </Grid>
