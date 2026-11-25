@@ -16,7 +16,6 @@ public sealed class GlobalSnapTapService : IDisposable
     private const uint LlkhfInjected = 0x10;
     private const uint KeyeventfKeyup = 0x0002;
     private const uint KeyeventfScancode = 0x0008;
-
     private const int PulseDurationMs = 90;
 
     // Physical scan codes: A=1E, D=20, W=11, S=1F.
@@ -112,8 +111,7 @@ public sealed class GlobalSnapTapService : IDisposable
             if (!_syntheticKeysDown.Remove(scanCode)) return;
             if (_releaseTimers.Remove(scanCode, out var timer)) timer.Dispose();
 
-            var up = CreateKeyboardInput(scanCode,
-                KeyeventfScancode | KeyeventfKeyup);
+            var up = CreateKeyboardInput(scanCode, KeyeventfScancode | KeyeventfKeyup);
             SendInput(1, new[] { up }, Marshal.SizeOf<Input>());
         }
     }
@@ -158,8 +156,7 @@ public sealed class GlobalSnapTapService : IDisposable
 
             foreach (var scanCode in _syntheticKeysDown)
             {
-                var up = CreateKeyboardInput(scanCode,
-                    KeyeventfScancode | KeyeventfKeyup);
+                var up = CreateKeyboardInput(scanCode, KeyeventfScancode | KeyeventfKeyup);
                 SendInput(1, new[] { up }, Marshal.SizeOf<Input>());
             }
 
@@ -186,10 +183,25 @@ public sealed class GlobalSnapTapService : IDisposable
         public InputUnion Union;
     }
 
+    // The native INPUT union is sized by MOUSEINPUT (32 bytes on x64),
+    // not KEYBDINPUT. Including it ensures Marshal.SizeOf<Input>() matches
+    // the cbSize required by SendInput (40 bytes on x64, 28 on x86).
     [StructLayout(LayoutKind.Explicit)]
     private struct InputUnion
     {
+        [FieldOffset(0)] public MouseInput Mouse;
         [FieldOffset(0)] public KeyboardInput Keyboard;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct MouseInput
+    {
+        public int Dx;
+        public int Dy;
+        public uint MouseData;
+        public uint Flags;
+        public uint Time;
+        public UIntPtr ExtraInfo;
     }
 
     [StructLayout(LayoutKind.Sequential)]
