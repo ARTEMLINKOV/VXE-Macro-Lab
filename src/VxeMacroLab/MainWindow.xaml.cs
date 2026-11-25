@@ -30,6 +30,10 @@ public partial class MainWindow : Window
     private bool _snapReleasePulseUp;
     private bool _snapReleasePulseDown;
     private readonly DispatcherTimer _snapPulseTimer = new() { Interval = TimeSpan.FromMilliseconds(90) };
+    private readonly DispatcherTimer _snapTriggerDelayTimer = new() { Interval = TimeSpan.FromMilliseconds(0) };
+    private int _snapPulseDurationMs = 90;
+    private int _snapTriggerDelayMs = 0;
+    private bool _snapPendingPulseLeft, _snapPendingPulseRight, _snapPendingPulseUp, _snapPendingPulseDown;
     private readonly DispatcherTimer _mousePlaybackTimer = new() { Interval = TimeSpan.FromMilliseconds(8) };
     private Stopwatch _mousePlaybackClock = new();
     private List<Point> _mousePlaybackPoints = new();
@@ -45,6 +49,7 @@ public partial class MainWindow : Window
         _mouseInput.MouseMoved += _ => UpdateMouseCount();
         UpdateKeyboardCount();
         _snapPulseTimer.Tick += (_, _) => { _snapReleasePulseLeft = false; _snapReleasePulseRight = false; _snapReleasePulseUp = false; _snapReleasePulseDown = false; _snapPulseTimer.Stop(); UpdateSnapTapPreview(); };
+        _snapTriggerDelayTimer.Tick += SnapTriggerDelayTimer_Tick;
         _mousePlaybackTimer.Tick += MousePlaybackTimer_Tick;
     }
 
@@ -524,10 +529,51 @@ public partial class MainWindow : Window
                 break;
             default: return;
         }
-        _snapPulseTimer.Stop();
-        _snapPulseTimer.Start();
+        QueueSnapPulse();
         e.Handled = true;
         UpdateSnapTapPreview();
+    }
+
+    private void QueueSnapPulse()
+    {
+        _snapPulseTimer.Stop();
+        _snapTriggerDelayTimer.Stop();
+        if (_snapTriggerDelayMs == 0)
+        {
+            StartSnapPulse();
+            return;
+        }
+        _snapTriggerDelayTimer.Interval = TimeSpan.FromMilliseconds(_snapTriggerDelayMs);
+        _snapTriggerDelayTimer.Start();
+    }
+
+    private void SnapTriggerDelayTimer_Tick(object? sender, EventArgs e)
+    {
+        _snapTriggerDelayTimer.Stop();
+        StartSnapPulse();
+    }
+
+    private void StartSnapPulse()
+    {
+        _snapPulseTimer.Stop();
+        _snapPulseTimer.Interval = TimeSpan.FromMilliseconds(_snapPulseDurationMs);
+        // Visual pulse state is already set on key release.
+        _snapPulseTimer.Start();
+        UpdateSnapTapPreview();
+    }
+
+    private void SnapTapPulseDurationSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        _snapPulseDurationMs = (int)e.NewValue;
+        if (SnapTapPulseDurationText != null)
+            SnapTapPulseDurationText.Text = $"{_snapPulseDurationMs} мс";
+    }
+
+    private void SnapTapTriggerDelaySlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        _snapTriggerDelayMs = (int)e.NewValue;
+        if (SnapTapTriggerDelayText != null)
+            SnapTapTriggerDelayText.Text = $"{_snapTriggerDelayMs} мс";
     }
 
     private void SnapTapTestArea_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
@@ -542,6 +588,8 @@ public partial class MainWindow : Window
         _snapReleasePulseLeft = _snapReleasePulseRight = false;
         _snapReleasePulseUp = _snapReleasePulseDown = false;
         _snapPulseTimer.Stop();
+        _snapTriggerDelayTimer.Stop();
+        _snapPendingPulseLeft = _snapPendingPulseRight = _snapPendingPulseUp = _snapPendingPulseDown = false;
         UpdateSnapTapPreview();
         SnapTapStatusText.Text = "Сброшено · нажми на площадку для теста";
     }
@@ -589,6 +637,7 @@ public partial class MainWindow : Window
     {
         MousePlaybackStopButton_Click(this, new RoutedEventArgs());
         _snapPulseTimer.Stop();
+        _snapTriggerDelayTimer.Stop();
         if (_mouseInput.IsRecording) _mouseInput.StopRecording();
         StopKeyboardRecording();
         _mouseInput.Dispose();
