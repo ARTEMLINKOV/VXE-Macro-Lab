@@ -23,9 +23,12 @@ public partial class MainWindow : Window
     private bool _keyboardRecording;
     private bool _snapLeftDown;
     private bool _snapRightDown;
-    private bool _snapLeftLast;
+    private bool _snapUpDown;
+    private bool _snapDownDown;
     private bool _snapReleasePulseLeft;
     private bool _snapReleasePulseRight;
+    private bool _snapReleasePulseUp;
+    private bool _snapReleasePulseDown;
     private readonly DispatcherTimer _snapPulseTimer = new() { Interval = TimeSpan.FromMilliseconds(90) };
     private readonly DispatcherTimer _mousePlaybackTimer = new() { Interval = TimeSpan.FromMilliseconds(8) };
     private Stopwatch _mousePlaybackClock = new();
@@ -41,7 +44,7 @@ public partial class MainWindow : Window
         _mouseInput.HotkeyPressed += ToggleMouseRecording;
         _mouseInput.MouseMoved += _ => UpdateMouseCount();
         UpdateKeyboardCount();
-        _snapPulseTimer.Tick += (_, _) => { _snapReleasePulseLeft = false; _snapReleasePulseRight = false; _snapPulseTimer.Stop(); UpdateSnapTapPreview(); };
+        _snapPulseTimer.Tick += (_, _) => { _snapReleasePulseLeft = false; _snapReleasePulseRight = false; _snapReleasePulseUp = false; _snapReleasePulseDown = false; _snapPulseTimer.Stop(); UpdateSnapTapPreview(); };
         _mousePlaybackTimer.Tick += MousePlaybackTimer_Tick;
     }
 
@@ -470,7 +473,7 @@ public partial class MainWindow : Window
     }
 
 
-    // SNAP-TAP LAB: isolated visual SOCD-priority demonstration.
+    // SNAP-TAP LAB: isolated four-direction visual demonstration.
     // Input is handled only while this in-app test surface owns keyboard focus.
     private void SnapTapTestArea_MouseDown(object sender, MouseButtonEventArgs e) =>
         SnapTapTestArea.Focus();
@@ -478,41 +481,53 @@ public partial class MainWindow : Window
     private void SnapTapTestArea_PreviewKeyDown(object sender, KeyEventArgs e)
     {
         var key = e.Key == Key.System ? e.SystemKey : e.Key;
-        if (key == Key.A || key == Key.Left)
+        switch (key)
         {
-            _snapLeftDown = true;
-            e.Handled = true;
-            UpdateSnapTapPreview();
+            case Key.A: case Key.Left:
+                _snapLeftDown = true; break;
+            case Key.D: case Key.Right:
+                _snapRightDown = true; break;
+            case Key.W: case Key.Up:
+                _snapUpDown = true; break;
+            case Key.S: case Key.Down:
+                _snapDownDown = true; break;
+            default: return;
         }
-        else if (key == Key.D || key == Key.Right)
-        {
-            _snapRightDown = true;
-            e.Handled = true;
-            UpdateSnapTapPreview();
-        }
+        e.Handled = true;
+        UpdateSnapTapPreview();
     }
 
     private void SnapTapTestArea_PreviewKeyUp(object sender, KeyEventArgs e)
     {
         var key = e.Key == Key.System ? e.SystemKey : e.Key;
-        if (key == Key.A || key == Key.Left)
+        switch (key)
         {
-            _snapLeftDown = false;
-            _snapReleasePulseRight = true;
-            _snapReleasePulseLeft = false;
-            _snapPulseTimer.Stop(); _snapPulseTimer.Start();
-            e.Handled = true;
-            UpdateSnapTapPreview();
+            case Key.A: case Key.Left:
+                _snapLeftDown = false;
+                _snapReleasePulseRight = true;
+                _snapReleasePulseLeft = false;
+                break;
+            case Key.D: case Key.Right:
+                _snapRightDown = false;
+                _snapReleasePulseLeft = true;
+                _snapReleasePulseRight = false;
+                break;
+            case Key.W: case Key.Up:
+                _snapUpDown = false;
+                _snapReleasePulseDown = true;
+                _snapReleasePulseUp = false;
+                break;
+            case Key.S: case Key.Down:
+                _snapDownDown = false;
+                _snapReleasePulseUp = true;
+                _snapReleasePulseDown = false;
+                break;
+            default: return;
         }
-        else if (key == Key.D || key == Key.Right)
-        {
-            _snapRightDown = false;
-            _snapReleasePulseLeft = true;
-            _snapReleasePulseRight = false;
-            _snapPulseTimer.Stop(); _snapPulseTimer.Start();
-            e.Handled = true;
-            UpdateSnapTapPreview();
-        }
+        _snapPulseTimer.Stop();
+        _snapPulseTimer.Start();
+        e.Handled = true;
+        UpdateSnapTapPreview();
     }
 
     private void SnapTapTestArea_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
@@ -523,10 +538,9 @@ public partial class MainWindow : Window
 
     private void ResetSnapTapPreview()
     {
-        _snapLeftDown = false;
-        _snapRightDown = false;
-        _snapReleasePulseLeft = false;
-        _snapReleasePulseRight = false;
+        _snapLeftDown = _snapRightDown = _snapUpDown = _snapDownDown = false;
+        _snapReleasePulseLeft = _snapReleasePulseRight = false;
+        _snapReleasePulseUp = _snapReleasePulseDown = false;
         _snapPulseTimer.Stop();
         UpdateSnapTapPreview();
         SnapTapStatusText.Text = "Сброшено · нажми на площадку для теста";
@@ -536,15 +550,39 @@ public partial class MainWindow : Window
     {
         var leftActive = _snapReleasePulseLeft || (_snapLeftDown && !_snapRightDown);
         var rightActive = _snapReleasePulseRight || (_snapRightDown && !_snapLeftDown);
-        SnapLeftCard.BorderBrush = leftActive ? new SolidColorBrush(Color.FromRgb(81, 214, 154)) : new SolidColorBrush(Color.FromRgb(48, 57, 73));
-        SnapRightCard.BorderBrush = rightActive ? new SolidColorBrush(Color.FromRgb(81, 214, 154)) : new SolidColorBrush(Color.FromRgb(48, 57, 73));
-        SnapLeftCard.Background = leftActive ? new SolidColorBrush(Color.FromRgb(24, 54, 47)) : new SolidColorBrush(Color.FromRgb(25, 31, 42));
-        SnapRightCard.Background = rightActive ? new SolidColorBrush(Color.FromRgb(24, 54, 47)) : new SolidColorBrush(Color.FromRgb(25, 31, 42));
-        SnapLeftState.Text = leftActive ? "АКТИВНО · ПРИОРИТЕТ" : _snapLeftDown ? "УДЕРЖИВАЕТСЯ · НЕ АКТИВНО" : "НЕ АКТИВНО";
-        SnapRightState.Text = rightActive ? "АКТИВНО · ПРИОРИТЕТ" : _snapRightDown ? "УДЕРЖИВАЕТСЯ · НЕ АКТИВНО" : "НЕ АКТИВНО";
-        SnapTapStatusText.Text = _snapReleasePulseLeft ? "KeyUp D → краткий импульс A (демо)"
-            : _snapReleasePulseRight ? "KeyUp A → краткий импульс D (демо)"
-            : leftActive ? "A удерживается" : rightActive ? "D удерживается" : "Нейтраль";
+        var upActive = _snapReleasePulseUp || (_snapUpDown && !_snapDownDown);
+        var downActive = _snapReleasePulseDown || (_snapDownDown && !_snapUpDown);
+
+        SetSnapCardState(SnapLeftCard, SnapLeftState, leftActive, _snapLeftDown, "A");
+        SetSnapCardState(SnapRightCard, SnapRightState, rightActive, _snapRightDown, "D");
+        SetSnapCardState(SnapUpCard, SnapUpState, upActive, _snapUpDown, "W");
+        SetSnapCardState(SnapDownCard, SnapDownState, downActive, _snapDownDown, "S");
+
+        SnapTapStatusText.Text =
+            _snapReleasePulseLeft ? "KeyUp D → краткий импульс A (демо)" :
+            _snapReleasePulseRight ? "KeyUp A → краткий импульс D (демо)" :
+            _snapReleasePulseUp ? "KeyUp S → краткий импульс W (демо)" :
+            _snapReleasePulseDown ? "KeyUp W → краткий импульс S (демо)" :
+            AnyDirectionHeld() ? $"Удерживаются: {HeldDirectionNames()}" : "Нейтраль";
+    }
+
+    private static void SetSnapCardState(Border card, TextBlock state, bool active, bool held, string key)
+    {
+        card.BorderBrush = active ? new SolidColorBrush(Color.FromRgb(81, 214, 154)) : new SolidColorBrush(Color.FromRgb(48, 57, 73));
+        card.Background = active ? new SolidColorBrush(Color.FromRgb(24, 54, 47)) : new SolidColorBrush(Color.FromRgb(25, 31, 42));
+        state.Text = active ? "АКТИВНО · ПРИОРИТЕТ" : held ? $"УДЕРЖИВАЕТСЯ · {key}" : "НЕ АКТИВНО";
+    }
+
+    private bool AnyDirectionHeld() => _snapLeftDown || _snapRightDown || _snapUpDown || _snapDownDown;
+
+    private string HeldDirectionNames()
+    {
+        var held = new List<string>();
+        if (_snapUpDown) held.Add("W");
+        if (_snapLeftDown) held.Add("A");
+        if (_snapDownDown) held.Add("S");
+        if (_snapRightDown) held.Add("D");
+        return string.Join(" + ", held);
     }
 
     protected override void OnClosed(EventArgs e)
