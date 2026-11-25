@@ -59,7 +59,6 @@ public sealed class GlobalSnapTapService : IDisposable
             var message = wParam.ToInt32();
             var data = Marshal.PtrToStructure<KbdLlHookStruct>(lParam);
 
-            // Ignore our own SendInput events so generated key presses never recurse.
             if ((data.Flags & LlkhfInjected) == 0)
             {
                 lock (_sync)
@@ -91,7 +90,6 @@ public sealed class GlobalSnapTapService : IDisposable
 
     private void SendPulse(ushort virtualKey)
     {
-        // Do not interfere if the corresponding physical key is already held.
         if ((GetAsyncKeyState(virtualKey) & 0x8000) != 0 && !_syntheticKeysDown.Contains(virtualKey))
             return;
 
@@ -122,7 +120,7 @@ public sealed class GlobalSnapTapService : IDisposable
         }
     }
 
-    private static ushort OppositeKey(ushort key) => key switch
+    private static ushort OppositeKey(uint key) => key switch
     {
         VkA => VkD,
         VkD => VkA,
