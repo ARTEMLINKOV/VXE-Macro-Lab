@@ -6,6 +6,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Microsoft.Win32;
 using VxeMacroLab.Models;
 using VxeMacroLab.Services;
@@ -23,6 +24,14 @@ public partial class MainWindow : Window
     private bool _snapLeftDown;
     private bool _snapRightDown;
     private bool _snapLeftLast;
+    private bool _snapReleasePulseLeft;
+    private bool _snapReleasePulseRight;
+    private readonly DispatcherTimer _snapPulseTimer = new() { Interval = TimeSpan.FromMilliseconds(90) };
+    private readonly DispatcherTimer _mousePlaybackTimer = new() { Interval = TimeSpan.FromMilliseconds(8) };
+    private Stopwatch _mousePlaybackClock = new();
+    private List<Point> _mousePlaybackPoints = new();
+    private List<long> _mousePlaybackTimes = new();
+    private bool _mousePlaybackActive;
 
     public MainWindow()
     {
@@ -32,6 +41,8 @@ public partial class MainWindow : Window
         _mouseInput.HotkeyPressed += ToggleMouseRecording;
         _mouseInput.MouseMoved += _ => UpdateMouseCount();
         UpdateKeyboardCount();
+        _snapPulseTimer.Tick += (_, _) => { _snapReleasePulseLeft = false; _snapReleasePulseRight = false; _snapPulseTimer.Stop(); UpdateSnapTapPreview(); };
+        _mousePlaybackTimer.Tick += MousePlaybackTimer_Tick;
     }
 
     protected override void OnSourceInitialized(EventArgs e)
@@ -158,6 +169,79 @@ public partial class MainWindow : Window
         var count = _mouseInput.IsRecording ? _mouseInput.Events.Count : _mouseEvents.Count;
         MouseEventCountText.Text = count.ToString("N0");
     }
+
+
+    private void MousePlayButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (_mouseEvents.Count < 2)
+        {
+            MessageBox.Show("Запиши или загрузи траекторию минимум из двух событий.", "Нет траектории",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+        MousePlaybackStopButton_Click(sender, e);
+        _mousePlaybackPoints.Clear();
+        _mousePlaybackTimes.Clear();
+        double x = 0, y = 0;
+        _mousePlaybackPoints.Add(new Point(0, 0));
+        _mousePlaybackTimes.Add(0);
+        foreach (var ev in _mouseEvents)
+        {
+            x += ev.X; y += ev.Y;
+            _mousePlaybackPoints.Add(new Point(x, y));
+            _mousePlaybackTimes.Add(ev.TimeMs);
+        }
+        _mousePlaybackActive = true;
+        _mousePlaybackClock.Restart();
+        StatusText.Text = "Воспроизведение курсором в пределах площадки";
+        _mousePlaybackTimer.Start();
+    }
+
+    private void MousePlaybackStopButton_Click(object sender, RoutedEventArgs e)
+    {
+        _mousePlaybackTimer.Stop();
+        _mousePlaybackActive = false;
+        _mousePlaybackClock.Stop();
+        StatusText.Text = "Воспроизведение траектории остановлено";
+    }
+
+    private void MousePlaybackTimer_Tick(object? sender, EventArgs e)
+    {
+        if (!_mousePlaybackActive || _mousePlaybackPoints.Count < 2) return;
+        var elapsed = _mousePlaybackClock.ElapsedMilliseconds;
+        if (elapsed >= _mousePlaybackTimes[^1])
+        {
+            MousePlaybackStopButton_Click(this, new RoutedEventArgs());
+            return;
+        }
+        var idx = 0;
+        while (idx < _mousePlaybackTimes.Count - 2 && _mousePlaybackTimes[idx + 1] < elapsed) idx++;
+        var t0 = _mousePlaybackTimes[idx];
+        var t1 = Math.Max(t0 + 1, _mousePlaybackTimes[idx + 1]);
+        var amount = Math.Clamp((double)(elapsed - t0) / (t1 - t0), 0, 1);
+        var a = _mousePlaybackPoints[idx];
+        var b = _mousePlaybackPoints[idx + 1];
+        var current = new Point(a.X + (b.X - a.X) * amount, a.Y + (b.Y - a.Y) * amount);
+        var minX = _mousePlaybackPoints.Min(p => p.X);
+        var maxX = _mousePlaybackPoints.Max(p => p.X);
+        var minY = _mousePlaybackPoints.Min(p => p.Y);
+        var maxY = _mousePlaybackPoints.Max(p => p.Y);
+        var w = Math.Max(1, maxX - minX);
+        var h = Math.Max(1, maxY - minY);
+        var cw = Math.Max(30, MousePreviewCanvas.ActualWidth - 40);
+        var ch = Math.Max(30, MousePreviewCanvas.ActualHeight - 40);
+        var scale = Math.Min(cw / w, ch / h);
+        var origin = MousePreviewCanvas.PointToScreen(new Point(0, 0));
+        var edge = MousePreviewCanvas.PointToScreen(new Point(MousePreviewCanvas.ActualWidth, MousePreviewCanvas.ActualHeight));
+        var px = origin.X + 20 + (cw - w * scale) / 2 + (current.X - minX) * scale;
+        var py = origin.Y + 20 + (ch - h * scale) / 2 + (current.Y - minY) * scale;
+        px = Math.Clamp(px, origin.X + 8, edge.X - 8);
+        py = Math.Clamp(py, origin.Y + 8, edge.Y - 8);
+        SetCursorPos((int)px, (int)py);
+    }
+
+    [System.Runtime.InteropServices.DllImport("user32.dll")]
+    private static extern bool SetCursorPos(int x, int y);
 
     private void DrawMousePath()
     {
@@ -396,14 +480,12 @@ public partial class MainWindow : Window
         var key = e.Key == Key.System ? e.SystemKey : e.Key;
         if (key == Key.A || key == Key.Left)
         {
-            if (!_snapLeftDown) _snapLeftLast = true;
             _snapLeftDown = true;
             e.Handled = true;
             UpdateSnapTapPreview();
         }
         else if (key == Key.D || key == Key.Right)
         {
-            if (!_snapRightDown) _snapLeftLast = false;
             _snapRightDown = true;
             e.Handled = true;
             UpdateSnapTapPreview();
@@ -416,12 +498,18 @@ public partial class MainWindow : Window
         if (key == Key.A || key == Key.Left)
         {
             _snapLeftDown = false;
+            _snapReleasePulseRight = true;
+            _snapReleasePulseLeft = false;
+            _snapPulseTimer.Stop(); _snapPulseTimer.Start();
             e.Handled = true;
             UpdateSnapTapPreview();
         }
         else if (key == Key.D || key == Key.Right)
         {
             _snapRightDown = false;
+            _snapReleasePulseLeft = true;
+            _snapReleasePulseRight = false;
+            _snapPulseTimer.Stop(); _snapPulseTimer.Start();
             e.Handled = true;
             UpdateSnapTapPreview();
         }
@@ -437,27 +525,32 @@ public partial class MainWindow : Window
     {
         _snapLeftDown = false;
         _snapRightDown = false;
+        _snapReleasePulseLeft = false;
+        _snapReleasePulseRight = false;
+        _snapPulseTimer.Stop();
         UpdateSnapTapPreview();
         SnapTapStatusText.Text = "Сброшено · нажми на площадку для теста";
     }
 
     private void UpdateSnapTapPreview()
     {
-        var leftActive = _snapLeftDown && (!_snapRightDown || _snapLeftLast);
-        var rightActive = _snapRightDown && (!_snapLeftDown || !_snapLeftLast);
+        var leftActive = _snapReleasePulseLeft || (_snapLeftDown && !_snapRightDown);
+        var rightActive = _snapReleasePulseRight || (_snapRightDown && !_snapLeftDown);
         SnapLeftCard.BorderBrush = leftActive ? new SolidColorBrush(Color.FromRgb(81, 214, 154)) : new SolidColorBrush(Color.FromRgb(48, 57, 73));
         SnapRightCard.BorderBrush = rightActive ? new SolidColorBrush(Color.FromRgb(81, 214, 154)) : new SolidColorBrush(Color.FromRgb(48, 57, 73));
         SnapLeftCard.Background = leftActive ? new SolidColorBrush(Color.FromRgb(24, 54, 47)) : new SolidColorBrush(Color.FromRgb(25, 31, 42));
         SnapRightCard.Background = rightActive ? new SolidColorBrush(Color.FromRgb(24, 54, 47)) : new SolidColorBrush(Color.FromRgb(25, 31, 42));
         SnapLeftState.Text = leftActive ? "АКТИВНО · ПРИОРИТЕТ" : _snapLeftDown ? "УДЕРЖИВАЕТСЯ · НЕ АКТИВНО" : "НЕ АКТИВНО";
         SnapRightState.Text = rightActive ? "АКТИВНО · ПРИОРИТЕТ" : _snapRightDown ? "УДЕРЖИВАЕТСЯ · НЕ АКТИВНО" : "НЕ АКТИВНО";
-        SnapTapStatusText.Text = _snapLeftDown && _snapRightDown
-            ? (_snapLeftLast ? "Обе нажаты · приоритет A / ←" : "Обе нажаты · приоритет D / →")
-            : leftActive ? "Влево · A / ←" : rightActive ? "Вправо · D / →" : "Нейтраль · отпущены обе";
+        SnapTapStatusText.Text = _snapReleasePulseLeft ? "KeyUp D → краткий импульс A (демо)"
+            : _snapReleasePulseRight ? "KeyUp A → краткий импульс D (демо)"
+            : leftActive ? "A удерживается" : rightActive ? "D удерживается" : "Нейтраль";
     }
 
     protected override void OnClosed(EventArgs e)
     {
+        MousePlaybackStopButton_Click(this, new RoutedEventArgs());
+        _snapPulseTimer.Stop();
         if (_mouseInput.IsRecording) _mouseInput.StopRecording();
         StopKeyboardRecording();
         _mouseInput.Dispose();
