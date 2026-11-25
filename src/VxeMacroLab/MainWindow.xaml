@@ -381,28 +381,41 @@
                             <StackPanel>
                                 <TextBlock Text="SNAP-TAP LAB" FontSize="10" FontWeight="Bold" Foreground="#8B7CFF"/>
                                 <TextBlock Text="Демонстрация сброса направления при отпускании" FontSize="19" FontWeight="SemiBold" Margin="0,6,0,0"/>
-                                <TextBlock Text="Локальный тест: KeyUp A показывает короткий импульс D, KeyUp D — импульс A. Это визуальная демонстрация внутри окна; синтетические клавиши в другие приложения не отправляются." TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                                <TextBlock Text="Локальный тест: отпускание A/D показывает импульс D/A, отпускание W/S — S/W. При диагональных сочетаниях остальные удерживаемые направления сохраняются. Только визуальная демонстрация в этом окне; синтетические клавиши в другие приложения не отправляются." TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
                             </StackPanel>
                         </Border>
                         <Border Grid.Row="1" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A" BorderThickness="1" CornerRadius="15" Padding="20">
                             <Grid>
                                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                                <TextBlock Text="Кликни по площадке. Удерживай A/D, затем отпусти клавишу — увидишь краткий визуальный импульс противоположного направления." FontSize="12" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,18"/>
+                                <TextBlock Text="Кликни по площадке. Удерживай W/A/S/D (можно сочетания), затем отпусти одну клавишу — соответствующая противоположная подсветится на 90 мс." FontSize="12" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,18"/>
                                 <Border x:Name="SnapTapTestArea" Grid.Row="1" Background="#0D1118" BorderBrush="#4A426F" BorderThickness="1" CornerRadius="12" Padding="18" Focusable="True"
                                         PreviewKeyDown="SnapTapTestArea_PreviewKeyDown" PreviewKeyUp="SnapTapTestArea_PreviewKeyUp"
                                         LostKeyboardFocus="SnapTapTestArea_LostKeyboardFocus" MouseDown="SnapTapTestArea_MouseDown">
                                     <Grid>
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                        <Border x:Name="SnapLeftCard" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="20">
+                                        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="16"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                        <Border x:Name="SnapUpCard" Grid.Row="0" Grid.Column="1" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16">
                                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                <TextBlock Text="A / ←" FontSize="30" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
-                                                <TextBlock x:Name="SnapLeftState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,12,0,0" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="W / ↑" FontSize="28" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="SnapUpState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
-                                        <Border Grid.Column="2" x:Name="SnapRightCard" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="20">
+                                        <Border x:Name="SnapLeftCard" Grid.Row="1" Grid.Column="0" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16">
                                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                <TextBlock Text="D / →" FontSize="30" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
-                                                <TextBlock x:Name="SnapRightState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,12,0,0" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="A / ←" FontSize="28" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="SnapLeftState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border x:Name="SnapDownCard" Grid.Row="2" Grid.Column="1" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16">
+                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="S / ↓" FontSize="28" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="SnapDownState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border x:Name="SnapRightCard" Grid.Row="1" Grid.Column="2" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16">
+                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="D / →" FontSize="28" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="SnapRightState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0" HorizontalAlignment="Center"/>
                                             </StackPanel>
                                         </Border>
                                     </Grid>
