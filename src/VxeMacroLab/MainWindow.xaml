@@ -380,14 +380,14 @@
                         <Border Background="{StaticResource PanelBrush}" BorderBrush="#252D3A" BorderThickness="1" CornerRadius="15" Padding="20" Margin="0,0,0,16">
                             <StackPanel>
                                 <TextBlock Text="SNAP-TAP LAB" FontSize="10" FontWeight="Bold" Foreground="#8B7CFF"/>
-                                <TextBlock Text="Тест приоритета противоположных клавиш" FontSize="19" FontWeight="SemiBold" Margin="0,6,0,0"/>
-                                <TextBlock Text="Локальная демонстрация: при одновременном удержании A и D активной считается последняя нажатая. Ввод обрабатывается только в этой тестовой области — в другие приложения клавиши не отправляются." TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                                <TextBlock Text="Демонстрация сброса направления при отпускании" FontSize="19" FontWeight="SemiBold" Margin="0,6,0,0"/>
+                                <TextBlock Text="Локальный тест: KeyUp A показывает короткий импульс D, KeyUp D — импульс A. Это визуальная демонстрация внутри окна; синтетические клавиши в другие приложения не отправляются." TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
                             </StackPanel>
                         </Border>
                         <Border Grid.Row="1" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A" BorderThickness="1" CornerRadius="15" Padding="20">
                             <Grid>
                                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                                <TextBlock Text="Кликни по тестовой площадке, затем нажимай и удерживай A / D (или ← / →)." FontSize="12" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,18"/>
+                                <TextBlock Text="Кликни по площадке. Удерживай A/D, затем отпусти клавишу — увидишь краткий визуальный импульс противоположного направления." FontSize="12" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,18"/>
                                 <Border x:Name="SnapTapTestArea" Grid.Row="1" Background="#0D1118" BorderBrush="#4A426F" BorderThickness="1" CornerRadius="12" Padding="18" Focusable="True"
                                         PreviewKeyDown="SnapTapTestArea_PreviewKeyDown" PreviewKeyUp="SnapTapTestArea_PreviewKeyUp"
                                         LostKeyboardFocus="SnapTapTestArea_LostKeyboardFocus" MouseDown="SnapTapTestArea_MouseDown">
