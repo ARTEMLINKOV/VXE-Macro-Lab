@@ -21,436 +21,64 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="ButtonBorder" Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="9" Padding="{TemplateBinding Padding}">
+                        <Border x:Name="ButtonBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="9" Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="ButtonBorder" Property="Background" Value="#30394A"/>
-                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#59677E"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.78"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.4"/>
-                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ButtonBorder" Property="Background" Value="#30394A"/><Setter TargetName="ButtonBorder" Property="BorderBrush" Value="#59677E"/></Trigger>
+                            <Trigger Property="IsPressed" Value="True"><Setter TargetName="ButtonBorder" Property="Opacity" Value="0.78"/></Trigger>
+                            <Trigger Property="IsEnabled" Value="False"><Setter TargetName="ButtonBorder" Property="Opacity" Value="0.4"/></Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="Background" Value="#7667F5"/>
-            <Setter Property="BorderBrush" Value="#7667F5"/>
-            <Setter Property="Foreground" Value="White"/>
-        </Style>
-        <Style x:Key="QuietButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-            <Setter Property="Background" Value="#1A202B"/>
-            <Setter Property="BorderBrush" Value="#293242"/>
-            <Setter Property="Foreground" Value="#AEB8C8"/>
-        </Style>
-        <Style TargetType="TabControl">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-        </Style>
-        <Style TargetType="TabItem">
-            <Setter Property="Foreground" Value="#AEB8C8"/>
-            <Setter Property="Background" Value="#171D27"/>
-            <Setter Property="Padding" Value="22,12"/>
-            <Setter Property="Margin" Value="0,0,8,0"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TabItem">
-                        <Border x:Name="TabBorder" Background="{TemplateBinding Background}"
-                                CornerRadius="9" Padding="{TemplateBinding Padding}">
-                            <ContentPresenter ContentSource="Header" HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="TabBorder" Property="Background" Value="#292447"/>
-                                <Setter Property="Foreground" Value="#C6BFFF"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="TabBorder" Property="Background" Value="#242B38"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style TargetType="TextBlock">
-            <Setter Property="TextOptions.TextFormattingMode" Value="Ideal"/>
-        </Style>
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Background" Value="#7667F5"/><Setter Property="BorderBrush" Value="#7667F5"/><Setter Property="Foreground" Value="White"/></Style>
+        <Style x:Key="QuietButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Background" Value="#1A202B"/><Setter Property="BorderBrush" Value="#293242"/><Setter Property="Foreground" Value="#AEB8C8"/></Style>
+        <Style TargetType="TabControl"><Setter Property="Background" Value="Transparent"/><Setter Property="BorderThickness" Value="0"/></Style>
+        <Style TargetType="TabItem"><Setter Property="Foreground" Value="#AEB8C8"/><Setter Property="Background" Value="#171D27"/><Setter Property="Padding" Value="22,12"/><Setter Property="Margin" Value="0,0,8,0"/><Setter Property="FontSize" Value="13"/><Setter Property="FontWeight" Value="SemiBold"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="TabItem"><Border x:Name="TabBorder" Background="{TemplateBinding Background}" CornerRadius="9" Padding="{TemplateBinding Padding}"><ContentPresenter ContentSource="Header" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsSelected" Value="True"><Setter TargetName="TabBorder" Property="Background" Value="#292447"/><Setter Property="Foreground" Value="#C6BFFF"/></Trigger><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="TabBorder" Property="Background" Value="#242B38"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter></Style>
+        <Style TargetType="TextBlock"><Setter Property="TextOptions.TextFormattingMode" Value="Ideal"/></Style>
     </Window.Resources>
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="224"/>
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
-
+        <Grid.ColumnDefinitions><ColumnDefinition Width="224"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
         <Border Grid.Column="0" Background="#10141C" BorderBrush="#202735" BorderThickness="0,0,1,0">
-            <Grid Margin="20,24">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="28"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Horizontal">
-                    <Border Width="38" Height="38" CornerRadius="12" Background="#7667F5">
-                        <TextBlock Text="V" FontSize="21" FontWeight="Bold" Foreground="White"
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
-                    <StackPanel Margin="11,0,0,0" VerticalAlignment="Center">
-                        <TextBlock Text="VXE MACRO" FontSize="15" FontWeight="Bold" Foreground="#F5F6FB"/>
-                        <TextBlock Text="LAB" FontSize="10" FontWeight="Bold" Foreground="#8B7CFF" Margin="0,1,0,0"/>
-                    </StackPanel>
-                </StackPanel>
-                <TextBlock Grid.Row="2" Text="MODULES" FontSize="10" FontWeight="Bold"
-                           Foreground="#667286" Margin="2,0,0,12"/>
-                <StackPanel Grid.Row="3">
-                    <Border Background="#24213D" CornerRadius="9" Padding="12,11" Margin="0,0,0,7">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="⌁" Foreground="#A99FFF" FontSize="17" Width="26"/>
-                            <TextBlock Text="Мышь" Foreground="#F1EFFF" FontSize="13" FontWeight="SemiBold"/>
-                        </StackPanel>
-                    </Border>
-                    <Border Background="#171D27" CornerRadius="9" Padding="12,11">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="⌨" Foreground="#AEB8C8" FontSize="15" Width="26"/>
-                            <TextBlock Text="Клавиатура" Foreground="#AEB8C8" FontSize="13"/>
-                        </StackPanel>
-                    </Border>
-                </StackPanel>
-                <Border Grid.Row="4" Background="#171D27" CornerRadius="12" Padding="12">
-                    <StackPanel>
-                        <TextBlock Text="LOCAL MODE" FontSize="10" FontWeight="Bold" Foreground="#8B7CFF"/>
-                        <TextBlock Text="Независимые модули" FontSize="12" Foreground="#D8DDE7" Margin="0,6,0,2"/>
-                        <TextBlock Text="Windows desktop app" FontSize="10" Foreground="#758195"/>
-                    </StackPanel>
-                </Border>
+            <Grid Margin="20,24"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="28"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal"><Border Width="38" Height="38" CornerRadius="12" Background="#7667F5"><TextBlock Text="V" FontSize="21" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border><StackPanel Margin="11,0,0,0" VerticalAlignment="Center"><TextBlock Text="VXE MACRO" FontSize="15" FontWeight="Bold" Foreground="#F5F6FB"/><TextBlock Text="LAB" FontSize="10" FontWeight="Bold" Foreground="#8B7CFF" Margin="0,1,0,0"/></StackPanel></StackPanel>
+                <TextBlock Grid.Row="2" Text="MODULES" FontSize="10" FontWeight="Bold" Foreground="#667286" Margin="2,0,0,12"/>
+                <StackPanel Grid.Row="3"><Border Background="#24213D" CornerRadius="9" Padding="12,11" Margin="0,0,0,7"><StackPanel Orientation="Horizontal"><TextBlock Text="⌁" Foreground="#A99FFF" FontSize="17" Width="26"/><TextBlock Text="Мышь" Foreground="#F1EFFF" FontSize="13" FontWeight="SemiBold"/></StackPanel></Border><Border Background="#171D27" CornerRadius="9" Padding="12,11"><StackPanel Orientation="Horizontal"><TextBlock Text="⌨" Foreground="#AEB8C8" FontSize="15" Width="26"/><TextBlock Text="Клавиатура" Foreground="#AEB8C8" FontSize="13"/></StackPanel></Border></StackPanel>
+                <Border Grid.Row="4" Background="#171D27" CornerRadius="12" Padding="12"><StackPanel><TextBlock Text="LOCAL MODE" FontSize="10" FontWeight="Bold" Foreground="#8B7CFF"/><TextBlock Text="Независимые модули" FontSize="12" Foreground="#D8DDE7" Margin="0,6,0,2"/><TextBlock Text="Windows desktop app" FontSize="10" Foreground="#758195"/></StackPanel></Border>
             </Grid>
         </Border>
 
         <Grid Grid.Column="1" Margin="30,25,30,22">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
             <Grid Grid.Row="0" Margin="0,0,0,22">
-                <StackPanel>
-                    <TextBlock Text="Рабочая область" FontSize="26" FontWeight="Bold" Foreground="#F4F6FB"/>
-                    <TextBlock Text="Два независимых инструмента записи. У каждого свои события и профили."
-                               FontSize="13" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                <StackPanel><TextBlock Text="Рабочая область" FontSize="26" FontWeight="Bold" Foreground="#F4F6FB"/><TextBlock Text="Глобальный Snap-Tap работает во всех приложениях Windows." FontSize="13" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/></StackPanel>
+                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal">
+                    <Button x:Name="GlobalSnapTapToggleButton" Content="Snap-Tap: ВКЛ" Click="GlobalSnapTapToggleButton_Click" Style="{StaticResource PrimaryButton}" Padding="16,8" Margin="0,0,10,0"/>
+                    <Border Background="#171E29" BorderBrush="#2A3443" BorderThickness="1" CornerRadius="20" Padding="12,8"><StackPanel Orientation="Horizontal"><Ellipse Width="7" Height="7" Fill="#51D69A" VerticalAlignment="Center"/><TextBlock x:Name="StatusText" Text="Готово" Foreground="#B9C4D4" FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center"/></StackPanel></Border>
                 </StackPanel>
-                <Border HorizontalAlignment="Right" VerticalAlignment="Center" Background="#171E29"
-                        BorderBrush="#2A3443" BorderThickness="1" CornerRadius="20" Padding="12,8">
-                    <StackPanel Orientation="Horizontal">
-                        <Ellipse Width="7" Height="7" Fill="#51D69A" VerticalAlignment="Center"/>
-                        <TextBlock x:Name="StatusText" Text="Готово" Foreground="#B9C4D4"
-                                   FontSize="12" Margin="8,0,0,0" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
             </Grid>
 
             <TabControl x:Name="ModuleTabs" Grid.Row="1" SelectedIndex="0">
-                <TabItem Header="⌁  Мышь">
-                    <Grid Margin="0,16,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A"
-                                BorderThickness="1" CornerRadius="15" Padding="18" Margin="0,0,0,16">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="MOUSE RECORDER" FontSize="10" FontWeight="Bold"
-                                               Foreground="#8B7CFF"/>
-                                    <TextBlock Text="Запись перемещений" FontSize="17" FontWeight="SemiBold"
-                                               Foreground="#F0F2F8" Margin="0,5,0,0"/>
-                                    <TextBlock Text="Физические движения мыши через Windows Raw Input."
-                                               FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0"/>
-                                </StackPanel>
-                                <WrapPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <Button x:Name="MouseRecordButton" Content="●  Начать запись"
-                                            Click="MouseRecordButton_Click" Style="{StaticResource PrimaryButton}"
-                                            Padding="18,12" Margin="0,0,8,0"/>
-                                    <Button Content="Остановить" Click="MouseStopButton_Click" Padding="16,12"
-                                            Margin="0,0,8,0"/>
-                                    <Button Content="Очистить" Click="MouseClearButton_Click"
-                                            Style="{StaticResource QuietButton}" Padding="16,12"/>
-                                </WrapPanel>
-                            </Grid>
-                        </Border>
-                        <Grid Grid.Row="1" Margin="0,0,0,16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="14"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="14"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A"
-                                    BorderThickness="1" CornerRadius="12" Padding="14">
-                                <StackPanel>
-                                    <TextBlock Text="СОБЫТИЯ МЫШИ" FontSize="10" Foreground="#8490A3" FontWeight="Bold"/>
-                                    <TextBlock x:Name="MouseEventCountText" Text="0" FontSize="21"
-                                               Foreground="#F1F3F8" FontWeight="SemiBold" Margin="0,6,0,0"/>
-                                </StackPanel>
-                            </Border>
-                            <Border Grid.Column="2" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A"
-                                    BorderThickness="1" CornerRadius="12" Padding="14">
-                                <StackPanel>
-                                    <TextBlock Text="ТИП ДАННЫХ" FontSize="10" Foreground="#8490A3" FontWeight="Bold"/>
-                                    <TextBlock Text="X / Y + время" FontSize="16" Foreground="#F1F3F8"
-                                               FontWeight="SemiBold" Margin="0,8,0,0"/>
-                                </StackPanel>
-                            </Border>
-                            <Border Grid.Column="4" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A"
-                                    BorderThickness="1" CornerRadius="12" Padding="14">
-                                <StackPanel>
-                                    <TextBlock Text="ФОРМАТ" FontSize="10" Foreground="#8490A3" FontWeight="Bold"/>
-                                    <TextBlock Text="Mouse JSON" FontSize="16" Foreground="#F1F3F8"
-                                               FontWeight="SemiBold" Margin="0,8,0,0"/>
-                                </StackPanel>
-                            </Border>
+                <TabItem Header="⌁  Мышь"><Grid Margin="0,16,0,0"><TextBlock Text="МОДУЛЬ МЫШИ" Foreground="#AEB8C8"/></Grid></TabItem>
+                <TabItem Header="⌨  Клавиатура"><Grid Margin="0,16,0,0"><TextBlock Text="МОДУЛЬ КЛАВИАТУРЫ" Foreground="#AEB8C8"/></Grid></TabItem>
+                <TabItem Header="⇆  Snap-Tap (тест)"><Grid Margin="0,16,0,0"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                    <Border Background="{StaticResource PanelBrush}" BorderBrush="#252D3A" BorderThickness="1" CornerRadius="15" Padding="20" Margin="0,0,0,16"><StackPanel><TextBlock Text="SNAP-TAP LAB" FontSize="10" FontWeight="Bold" Foreground="#8B7CFF"/><TextBlock Text="Глобальный перехват WASD во всех приложениях" FontSize="19" FontWeight="SemiBold" Margin="0,6,0,0"/><TextBlock Text="Отпускание одной клавиши направления посылает краткий импульс противоположной клавиши." FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,5,0,0"/></StackPanel></Border>
+                    <Border x:Name="SnapTapTestArea" Grid.Row="1" Background="#0D1118" BorderBrush="#4A426F" BorderThickness="1" CornerRadius="12" Padding="18" Focusable="True" PreviewKeyDown="SnapTapTestArea_PreviewKeyDown" PreviewKeyUp="SnapTapTestArea_PreviewKeyUp" LostKeyboardFocus="SnapTapTestArea_LostKeyboardFocus" MouseDown="SnapTapTestArea_MouseDown">
+                        <Grid><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="16"/><RowDefinition Height="*"/></Grid.RowDefinitions><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <Border x:Name="SnapUpCard" Grid.Row="0" Grid.Column="1" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16"><StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"><TextBlock Text="W / ↑" FontSize="28" FontWeight="Bold"/><TextBlock x:Name="SnapUpState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0"/></StackPanel></Border>
+                            <Border x:Name="SnapLeftCard" Grid.Row="1" Grid.Column="0" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16"><StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"><TextBlock Text="A / ←" FontSize="28" FontWeight="Bold"/><TextBlock x:Name="SnapLeftState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0"/></StackPanel></Border>
+                            <Border x:Name="SnapDownCard" Grid.Row="2" Grid.Column="1" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16"><StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"><TextBlock Text="S / ↓" FontSize="28" FontWeight="Bold"/><TextBlock x:Name="SnapDownState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0"/></StackPanel></Border>
+                            <Border x:Name="SnapRightCard" Grid.Row="1" Grid.Column="2" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16"><StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"><TextBlock Text="D / →" FontSize="28" FontWeight="Bold"/><TextBlock x:Name="SnapRightState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0"/></StackPanel></Border>
                         </Grid>
-                        <Border Grid.Row="2" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A"
-                                BorderThickness="1" CornerRadius="15" Padding="18">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Grid Margin="0,0,0,13">
-                                    <StackPanel>
-                                        <TextBlock Text="Траектория мыши" FontSize="16" FontWeight="SemiBold"/>
-                                        <TextBlock Text="Запуск записанного пути курсором Windows, ограничен областью предпросмотра"
-                                                   FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Content="▶  Пройти траекторию" Click="MousePlayButton_Click"
-                                                Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" Padding="13,9"/>
-                                        <Button Content="■  Стоп" Click="MousePlaybackStopButton_Click"
-                                                Style="{StaticResource QuietButton}" Margin="0,0,8,0" Padding="13,9"/>
-                                        <Button Content="Сохранить профиль мыши" Click="MouseSaveButton_Click"
-                                                Style="{StaticResource QuietButton}" Margin="0,0,8,0" Padding="13,9"/>
-                                        <Button Content="Загрузить" Click="MouseLoadButton_Click"
-                                                Style="{StaticResource QuietButton}" Padding="13,9"/>
-                                    </StackPanel>
-                                </Grid>
-                                <Border Grid.Row="1" Background="#0D1118" BorderBrush="#222B38"
-                                        BorderThickness="1" CornerRadius="10" Padding="8">
-                                    <Canvas x:Name="MousePreviewCanvas" ClipToBounds="True" Background="#0D1118"/>
-                                </Border>
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </TabItem>
-
-                <TabItem Header="⌨  Клавиатура">
-                    <Grid Margin="0,16,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Border Grid.Row="0" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A"
-                                BorderThickness="1" CornerRadius="15" Padding="18" Margin="0,0,0,16">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel VerticalAlignment="Center">
-                                    <TextBlock Text="KEYBOARD RECORDER" FontSize="10" FontWeight="Bold"
-                                               Foreground="#8B7CFF"/>
-                                    <TextBlock Text="Запись клавиш" FontSize="17" FontWeight="SemiBold"
-                                               Foreground="#F0F2F8" Margin="0,5,0,0"/>
-                                    <TextBlock Text="Запись клавиш только при активном окне приложения."
-                                               FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0"/>
-                                </StackPanel>
-                                <WrapPanel Grid.Column="1" VerticalAlignment="Center">
-                                    <Button x:Name="KeyboardRecordButton" Content="●  Начать запись"
-                                            Click="KeyboardRecordButton_Click" Style="{StaticResource PrimaryButton}"
-                                            Padding="18,12" Margin="0,0,8,0"/>
-                                    <Button Content="Остановить" Click="KeyboardStopButton_Click" Padding="16,12"
-                                            Margin="0,0,8,0"/>
-                                    <Button Content="Очистить" Click="KeyboardClearButton_Click"
-                                            Style="{StaticResource QuietButton}" Padding="16,12"/>
-                                </WrapPanel>
-                            </Grid>
-                        </Border>
-                        <Grid Grid.Row="1" Margin="0,0,0,16">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="14"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="14"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A"
-                                    BorderThickness="1" CornerRadius="12" Padding="14">
-                                <StackPanel>
-                                    <TextBlock Text="СОБЫТИЯ КЛАВИАТУРЫ" FontSize="10" Foreground="#8490A3" FontWeight="Bold"/>
-                                    <TextBlock x:Name="KeyboardEventCountText" Text="0" FontSize="21"
-                                               Foreground="#F1F3F8" FontWeight="SemiBold" Margin="0,6,0,0"/>
-                                </StackPanel>
-                            </Border>
-                            <Border Grid.Column="2" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A"
-                                    BorderThickness="1" CornerRadius="12" Padding="14">
-                                <StackPanel>
-                                    <TextBlock Text="ТИП ДАННЫХ" FontSize="10" Foreground="#8490A3" FontWeight="Bold"/>
-                                    <TextBlock Text="Клавиша + время" FontSize="16" Foreground="#F1F3F8"
-                                               FontWeight="SemiBold" Margin="0,8,0,0"/>
-                                </StackPanel>
-                            </Border>
-                            <Border Grid.Column="4" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A"
-                                    BorderThickness="1" CornerRadius="12" Padding="14">
-                                <StackPanel>
-                                    <TextBlock Text="ФОРМАТ" FontSize="10" Foreground="#8490A3" FontWeight="Bold"/>
-                                    <TextBlock Text="Keyboard JSON" FontSize="16" Foreground="#F1F3F8"
-                                               FontWeight="SemiBold" Margin="0,8,0,0"/>
-                                </StackPanel>
-                            </Border>
-                        </Grid>
-                        <Border Grid.Row="2" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A"
-                                BorderThickness="1" CornerRadius="15" Padding="18">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                </Grid.RowDefinitions>
-                                <Grid Margin="0,0,0,13">
-                                    <StackPanel>
-                                        <TextBlock Text="Последовательность клавиш" FontSize="16" FontWeight="SemiBold"/>
-                                        <TextBlock Text="Нажми «Начать запись», затем вводи клавиши в этой области"
-                                                   FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                        <Button Content="Сохранить профиль клавиатуры" Click="KeyboardSaveButton_Click"
-                                                Style="{StaticResource QuietButton}" Margin="0,0,8,0" Padding="13,9"/>
-                                        <Button Content="Загрузить" Click="KeyboardLoadButton_Click"
-                                                Style="{StaticResource QuietButton}" Padding="13,9"/>
-                                    </StackPanel>
-                                </Grid>
-                                <Border x:Name="KeyboardCaptureArea" Grid.Row="1" Focusable="True"
-                                        Background="#0D1118" BorderBrush="#4A426F" BorderThickness="1"
-                                        CornerRadius="10" Padding="10"
-                                        PreviewKeyDown="KeyboardCaptureArea_PreviewKeyDown"
-                                        PreviewKeyUp="KeyboardCaptureArea_PreviewKeyUp"
-                                        MouseDown="KeyboardCaptureArea_MouseDown"
-                                        LostKeyboardFocus="KeyboardCaptureArea_LostKeyboardFocus">
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="Auto"/>
-                                            <RowDefinition Height="*"/>
-                                        </Grid.RowDefinitions>
-                                        <TextBlock Text="ОБЛАСТЬ ЗАХВАТА · ФОКУСИРУЕМАЯ"
-                                                   FontSize="10" FontWeight="Bold" Foreground="#8B7CFF"
-                                                   Margin="5,2,5,10"/>
-                                        <ListBox x:Name="KeyboardEventsList" Grid.Row="1"
-                                                 Background="Transparent" BorderThickness="0"
-                                                 Foreground="#DCE2ED" FontFamily="Consolas" FontSize="12"
-                                                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
-                                    </Grid>
-                                </Border>
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </TabItem>
-
-                <TabItem Header="⇆  Snap-Tap (тест)">
-                    <Grid Margin="0,16,0,0">
-                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                        <Border Background="{StaticResource PanelBrush}" BorderBrush="#252D3A" BorderThickness="1" CornerRadius="15" Padding="20" Margin="0,0,0,16">
-                            <StackPanel>
-                                <TextBlock Text="SNAP-TAP LAB" FontSize="10" FontWeight="Bold" Foreground="#8B7CFF"/>
-                                <TextBlock Text="Демонстрация сброса направления при отпускании" FontSize="19" FontWeight="SemiBold" Margin="0,6,0,0"/>
-                                <TextBlock Text="Локальный тест: отпускание A/D показывает импульс D/A, отпускание W/S — S/W. При диагональных сочетаниях остальные удерживаемые направления сохраняются. Только визуальная демонстрация в этом окне; синтетические клавиши в другие приложения не отправляются." TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Row="1" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A" BorderThickness="1" CornerRadius="15" Padding="20">
-                            <Grid>
-                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                                <StackPanel Margin="0,0,0,16">
-                                    <TextBlock Text="Кликни по площадке. Удерживай W/A/S/D и отпускай клавиши — визуальный импульс противоположного направления." FontSize="12" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
-                                    <Grid>
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                        <StackPanel Grid.Column="0">
-                                            <TextBlock Text="ДЛИТЕЛЬНОСТЬ ИМПУЛЬСА" FontSize="10" FontWeight="Bold" Foreground="#8D98AA"/>
-                                            <Slider x:Name="SnapTapPulseDurationSlider" Minimum="20" Maximum="250" Value="90" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="SnapTapPulseDurationSlider_ValueChanged" Margin="0,6,0,0"/>
-                                            <TextBlock x:Name="SnapTapPulseDurationText" Text="90 мс" FontSize="12" Foreground="#DCE2ED"/>
-                                        </StackPanel>
-                                        <StackPanel Grid.Column="2">
-                                            <TextBlock Text="ЗАДЕРЖКА СРАБАТЫВАНИЯ" FontSize="10" FontWeight="Bold" Foreground="#8D98AA"/>
-                                            <Slider x:Name="SnapTapTriggerDelaySlider" Minimum="0" Maximum="100" Value="0" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="SnapTapTriggerDelaySlider_ValueChanged" Margin="0,6,0,0"/>
-                                            <TextBlock x:Name="SnapTapTriggerDelayText" Text="0 мс" FontSize="12" Foreground="#DCE2ED"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </StackPanel>
-                                <Border x:Name="SnapTapTestArea" Grid.Row="1" Background="#0D1118" BorderBrush="#4A426F" BorderThickness="1" CornerRadius="12" Padding="18" Focusable="True"
-                                        PreviewKeyDown="SnapTapTestArea_PreviewKeyDown" PreviewKeyUp="SnapTapTestArea_PreviewKeyUp"
-                                        LostKeyboardFocus="SnapTapTestArea_LostKeyboardFocus" MouseDown="SnapTapTestArea_MouseDown">
-                                    <Grid>
-                                        <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="16"/><RowDefinition Height="*"/></Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                        <Border x:Name="SnapUpCard" Grid.Row="0" Grid.Column="1" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16">
-                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                <TextBlock Text="W / ↑" FontSize="28" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
-                                                <TextBlock x:Name="SnapUpState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0" HorizontalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                        <Border x:Name="SnapLeftCard" Grid.Row="1" Grid.Column="0" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16">
-                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                <TextBlock Text="A / ←" FontSize="28" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
-                                                <TextBlock x:Name="SnapLeftState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0" HorizontalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                        <Border x:Name="SnapDownCard" Grid.Row="2" Grid.Column="1" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16">
-                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                <TextBlock Text="S / ↓" FontSize="28" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
-                                                <TextBlock x:Name="SnapDownState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0" HorizontalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                        <Border x:Name="SnapRightCard" Grid.Row="1" Grid.Column="2" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="16">
-                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-                                                <TextBlock Text="D / →" FontSize="28" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
-                                                <TextBlock x:Name="SnapRightState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,10,0,0" HorizontalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </Grid>
-                                </Border>
-                                <Grid Grid.Row="2" Margin="0,16,0,0">
-                                    <TextBlock x:Name="SnapTapStatusText" Text="Фокус не активен · нажми на площадку" Foreground="#8D98AA" FontSize="12" VerticalAlignment="Center"/>
-                                    <Button Content="Сбросить" Click="SnapTapResetButton_Click" Style="{StaticResource QuietButton}" HorizontalAlignment="Right"/>
-                                </Grid>
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </TabItem>
+                    </Border>
+                    <Grid Grid.Row="2" Margin="0,16,0,0"><TextBlock x:Name="SnapTapStatusText" Text="Фокус не активен · нажми на площадку" Foreground="#8D98AA" FontSize="12" VerticalAlignment="Center"/><Button Content="Сбросить" Click="SnapTapResetButton_Click" Style="{StaticResource QuietButton}" HorizontalAlignment="Right"/></Grid>
+                </Grid></TabItem>
             </TabControl>
 
-            <Grid Grid.Row="2" Margin="1,15,1,0">
-                <TextBlock Text="GhostLayer · профили зашифрованы DPAPI · захват мыши только во время записи"
-                           Foreground="#667286" FontSize="11" VerticalAlignment="Center"/>
-                <TextBlock Text="Без скрытия процесса и обхода системной защиты"
-                           Foreground="#667286" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-            </Grid>
+            <Grid Grid.Row="2" Margin="1,15,1,0"><TextBlock Text="GhostLayer · глобальный перехват клавиатуры" Foreground="#667286" FontSize="11" VerticalAlignment="Center"/><TextBlock Text="WASD / A-D / W-S" Foreground="#667286" FontSize="11" HorizontalAlignment="Right"/></Grid>
         </Grid>
     </Grid>
 </Window>

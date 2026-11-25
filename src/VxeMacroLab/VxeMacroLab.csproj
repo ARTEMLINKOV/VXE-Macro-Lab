@@ -5,11 +5,8 @@
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
-    <RootNamespace>VxeMacroLab</RootNamespace>
-    <AssemblyName>VxeMacroLab</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <Compile Include=".\**\*.cs" Exclude="obj\**\;bin\**\" />
   </ItemGroup>
 </Project>
