@@ -543,6 +543,13 @@ public partial class MainWindow : Window
             StartSnapPulse();
             return;
         }
+        _snapPendingPulseLeft = _snapReleasePulseLeft;
+        _snapPendingPulseRight = _snapReleasePulseRight;
+        _snapPendingPulseUp = _snapReleasePulseUp;
+        _snapPendingPulseDown = _snapReleasePulseDown;
+        _snapReleasePulseLeft = _snapReleasePulseRight = false;
+        _snapReleasePulseUp = _snapReleasePulseDown = false;
+        UpdateSnapTapPreview();
         _snapTriggerDelayTimer.Interval = TimeSpan.FromMilliseconds(_snapTriggerDelayMs);
         _snapTriggerDelayTimer.Start();
     }
@@ -550,6 +557,12 @@ public partial class MainWindow : Window
     private void SnapTriggerDelayTimer_Tick(object? sender, EventArgs e)
     {
         _snapTriggerDelayTimer.Stop();
+        _snapReleasePulseLeft = _snapPendingPulseLeft;
+        _snapReleasePulseRight = _snapPendingPulseRight;
+        _snapReleasePulseUp = _snapPendingPulseUp;
+        _snapReleasePulseDown = _snapPendingPulseDown;
+        _snapPendingPulseLeft = _snapPendingPulseRight = false;
+        _snapPendingPulseUp = _snapPendingPulseDown = false;
         StartSnapPulse();
     }
 
