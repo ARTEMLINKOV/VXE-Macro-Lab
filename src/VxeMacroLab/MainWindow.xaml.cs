@@ -19,6 +19,9 @@ public partial class MainWindow : Window
     private readonly Stopwatch _keyboardClock = new();
     private readonly HashSet<Key> _pressedKeys = new();
     private bool _keyboardRecording;
+    private bool _snapLeftDown;
+    private bool _snapRightDown;
+    private bool _snapLeftLast;
 
     public MainWindow()
     {
@@ -379,6 +382,77 @@ public partial class MainWindow : Window
         }
         if (KeyboardEventsList.Items.Count > 0)
             KeyboardEventsList.ScrollIntoView(KeyboardEventsList.Items[^1]);
+    }
+
+
+    // SNAP-TAP LAB: isolated visual SOCD-priority demonstration.
+    // Input is handled only while this in-app test surface owns keyboard focus.
+    private void SnapTapTestArea_MouseDown(object sender, MouseButtonEventArgs e) =>
+        SnapTapTestArea.Focus();
+
+    private void SnapTapTestArea_PreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+        if (key == Key.A || key == Key.Left)
+        {
+            if (!_snapLeftDown) _snapLeftLast = true;
+            _snapLeftDown = true;
+            e.Handled = true;
+            UpdateSnapTapPreview();
+        }
+        else if (key == Key.D || key == Key.Right)
+        {
+            if (!_snapRightDown) _snapLeftLast = false;
+            _snapRightDown = true;
+            e.Handled = true;
+            UpdateSnapTapPreview();
+        }
+    }
+
+    private void SnapTapTestArea_PreviewKeyUp(object sender, KeyEventArgs e)
+    {
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+        if (key == Key.A || key == Key.Left)
+        {
+            _snapLeftDown = false;
+            e.Handled = true;
+            UpdateSnapTapPreview();
+        }
+        else if (key == Key.D || key == Key.Right)
+        {
+            _snapRightDown = false;
+            e.Handled = true;
+            UpdateSnapTapPreview();
+        }
+    }
+
+    private void SnapTapTestArea_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
+        ResetSnapTapPreview();
+
+    private void SnapTapResetButton_Click(object sender, RoutedEventArgs e) =>
+        ResetSnapTapPreview();
+
+    private void ResetSnapTapPreview()
+    {
+        _snapLeftDown = false;
+        _snapRightDown = false;
+        UpdateSnapTapPreview();
+        SnapTapStatusText.Text = "Сброшено · нажми на площадку для теста";
+    }
+
+    private void UpdateSnapTapPreview()
+    {
+        var leftActive = _snapLeftDown && (!_snapRightDown || _snapLeftLast);
+        var rightActive = _snapRightDown && (!_snapLeftDown || !_snapLeftLast);
+        SnapLeftCard.BorderBrush = leftActive ? new SolidColorBrush(Color.FromRgb(81, 214, 154)) : new SolidColorBrush(Color.FromRgb(48, 57, 73));
+        SnapRightCard.BorderBrush = rightActive ? new SolidColorBrush(Color.FromRgb(81, 214, 154)) : new SolidColorBrush(Color.FromRgb(48, 57, 73));
+        SnapLeftCard.Background = leftActive ? new SolidColorBrush(Color.FromRgb(24, 54, 47)) : new SolidColorBrush(Color.FromRgb(25, 31, 42));
+        SnapRightCard.Background = rightActive ? new SolidColorBrush(Color.FromRgb(24, 54, 47)) : new SolidColorBrush(Color.FromRgb(25, 31, 42));
+        SnapLeftState.Text = leftActive ? "АКТИВНО · ПРИОРИТЕТ" : _snapLeftDown ? "УДЕРЖИВАЕТСЯ · НЕ АКТИВНО" : "НЕ АКТИВНО";
+        SnapRightState.Text = rightActive ? "АКТИВНО · ПРИОРИТЕТ" : _snapRightDown ? "УДЕРЖИВАЕТСЯ · НЕ АКТИВНО" : "НЕ АКТИВНО";
+        SnapTapStatusText.Text = _snapLeftDown && _snapRightDown
+            ? (_snapLeftLast ? "Обе нажаты · приоритет A / ←" : "Обе нажаты · приоритет D / →")
+            : leftActive ? "Влево · A / ←" : rightActive ? "Вправо · D / →" : "Нейтраль · отпущены обе";
     }
 
     protected override void OnClosed(EventArgs e)
