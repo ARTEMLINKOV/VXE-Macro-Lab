@@ -7,6 +7,8 @@ public partial class App : Application
 {
     private GlobalSnapTapService? _globalSnapTap;
 
+    public GlobalSnapTapService? GlobalSnapTap => _globalSnapTap;
+
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
