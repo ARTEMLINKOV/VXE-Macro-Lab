@@ -387,7 +387,22 @@
                         <Border Grid.Row="1" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A" BorderThickness="1" CornerRadius="15" Padding="20">
                             <Grid>
                                 <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                                <TextBlock Text="Кликни по площадке. Удерживай W/A/S/D (можно сочетания), затем отпусти одну клавишу — соответствующая противоположная подсветится на 90 мс." FontSize="12" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,18"/>
+                                <StackPanel Margin="0,0,0,16">
+                                    <TextBlock Text="Кликни по площадке. Удерживай W/A/S/D и отпускай клавиши — визуальный импульс противоположного направления." FontSize="12" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Text="ДЛИТЕЛЬНОСТЬ ИМПУЛЬСА" FontSize="10" FontWeight="Bold" Foreground="#8D98AA"/>
+                                            <Slider x:Name="SnapTapPulseDurationSlider" Minimum="20" Maximum="250" Value="90" TickFrequency="10" IsSnapToTickEnabled="True" ValueChanged="SnapTapPulseDurationSlider_ValueChanged" Margin="0,6,0,0"/>
+                                            <TextBlock x:Name="SnapTapPulseDurationText" Text="90 мс" FontSize="12" Foreground="#DCE2ED"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Text="ЗАДЕРЖКА СРАБАТЫВАНИЯ" FontSize="10" FontWeight="Bold" Foreground="#8D98AA"/>
+                                            <Slider x:Name="SnapTapTriggerDelaySlider" Minimum="0" Maximum="100" Value="0" TickFrequency="5" IsSnapToTickEnabled="True" ValueChanged="SnapTapTriggerDelaySlider_ValueChanged" Margin="0,6,0,0"/>
+                                            <TextBlock x:Name="SnapTapTriggerDelayText" Text="0 мс" FontSize="12" Foreground="#DCE2ED"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
                                 <Border x:Name="SnapTapTestArea" Grid.Row="1" Background="#0D1118" BorderBrush="#4A426F" BorderThickness="1" CornerRadius="12" Padding="18" Focusable="True"
                                         PreviewKeyDown="SnapTapTestArea_PreviewKeyDown" PreviewKeyUp="SnapTapTestArea_PreviewKeyUp"
                                         LostKeyboardFocus="SnapTapTestArea_LostKeyboardFocus" MouseDown="SnapTapTestArea_MouseDown">
