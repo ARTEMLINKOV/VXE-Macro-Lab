@@ -369,6 +369,48 @@
                         </Border>
                     </Grid>
                 </TabItem>
+
+                <TabItem Header="⇆  Snap-Tap (тест)">
+                    <Grid Margin="0,16,0,0">
+                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                        <Border Background="{StaticResource PanelBrush}" BorderBrush="#252D3A" BorderThickness="1" CornerRadius="15" Padding="20" Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="SNAP-TAP LAB" FontSize="10" FontWeight="Bold" Foreground="#8B7CFF"/>
+                                <TextBlock Text="Тест приоритета противоположных клавиш" FontSize="19" FontWeight="SemiBold" Margin="0,6,0,0"/>
+                                <TextBlock Text="Локальная демонстрация: при одновременном удержании A и D активной считается последняя нажатая. Ввод обрабатывается только в этой тестовой области — в другие приложения клавиши не отправляются." TextWrapping="Wrap" FontSize="12" Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Row="1" Background="{StaticResource PanelBrush}" BorderBrush="#252D3A" BorderThickness="1" CornerRadius="15" Padding="20">
+                            <Grid>
+                                <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                <TextBlock Text="Кликни по тестовой площадке, затем нажимай и удерживай A / D (или ← / →)." FontSize="12" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,0,0,18"/>
+                                <Border x:Name="SnapTapTestArea" Grid.Row="1" Background="#0D1118" BorderBrush="#4A426F" BorderThickness="1" CornerRadius="12" Padding="18" Focusable="True"
+                                        PreviewKeyDown="SnapTapTestArea_PreviewKeyDown" PreviewKeyUp="SnapTapTestArea_PreviewKeyUp"
+                                        LostKeyboardFocus="SnapTapTestArea_LostKeyboardFocus" MouseDown="SnapTapTestArea_MouseDown">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="24"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                        <Border x:Name="SnapLeftCard" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="20">
+                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="A / ←" FontSize="30" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="SnapLeftState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,12,0,0" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Grid.Column="2" x:Name="SnapRightCard" Background="#191F2A" BorderBrush="#303949" BorderThickness="1" CornerRadius="14" Padding="20">
+                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="D / →" FontSize="30" FontWeight="Bold" Foreground="#DCE2ED" HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="SnapRightState" Text="НЕ АКТИВНО" FontSize="11" FontWeight="Bold" Foreground="#8D98AA" Margin="0,12,0,0" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                                <Grid Grid.Row="2" Margin="0,16,0,0">
+                                    <TextBlock x:Name="SnapTapStatusText" Text="Фокус не активен · нажми на площадку" Foreground="#8D98AA" FontSize="12" VerticalAlignment="Center"/>
+                                    <Button Content="Сбросить" Click="SnapTapResetButton_Click" Style="{StaticResource QuietButton}" HorizontalAlignment="Right"/>
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </TabItem>
             </TabControl>
 
             <Grid Grid.Row="2" Margin="1,15,1,0">
