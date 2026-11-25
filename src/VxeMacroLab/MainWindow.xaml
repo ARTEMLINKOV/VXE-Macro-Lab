@@ -239,10 +239,14 @@
                                 <Grid Margin="0,0,0,13">
                                     <StackPanel>
                                         <TextBlock Text="Траектория мыши" FontSize="16" FontWeight="SemiBold"/>
-                                        <TextBlock Text="Только визуальный предпросмотр записанного пути"
+                                        <TextBlock Text="Запуск записанного пути курсором Windows, ограничен областью предпросмотра"
                                                    FontSize="11" Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                        <Button Content="▶  Пройти траекторию" Click="MousePlayButton_Click"
+                                                Style="{StaticResource PrimaryButton}" Margin="0,0,8,0" Padding="13,9"/>
+                                        <Button Content="■  Стоп" Click="MousePlaybackStopButton_Click"
+                                                Style="{StaticResource QuietButton}" Margin="0,0,8,0" Padding="13,9"/>
                                         <Button Content="Сохранить профиль мыши" Click="MouseSaveButton_Click"
                                                 Style="{StaticResource QuietButton}" Margin="0,0,8,0" Padding="13,9"/>
                                         <Button Content="Загрузить" Click="MouseLoadButton_Click"
