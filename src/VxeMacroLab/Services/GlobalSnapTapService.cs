@@ -38,7 +38,7 @@ public sealed class GlobalSnapTapService : IDisposable
             if (_enabled == enabled) return;
             if (!enabled)
             {
-                // Restore held physical directions before returning to pass-through mode.
+                // Release synthesized state, then restore physically held directions.
                 foreach (var scanCode in _syntheticKeysDown.ToArray()) SendKey(scanCode, keyUp: true);
                 _syntheticKeysDown.Clear();
                 foreach (var scanCode in _physicalKeysDown) SendKey(scanCode, keyUp: false);
@@ -67,6 +67,7 @@ public sealed class GlobalSnapTapService : IDisposable
         if (code >= 0)
         {
             var data = Marshal.PtrToStructure<KbdLlHookStruct>(lParam);
+            // Let our own SendInput events continue through the Windows hook chain.
             if ((data.Flags & LlkhfInjected) == 0)
             {
                 var message = wParam.ToInt32();
@@ -75,12 +76,17 @@ public sealed class GlobalSnapTapService : IDisposable
                 {
                     if (_enabled && IsDirection(scanCode))
                     {
-                        if (message is WmKeyDown or WmSysKeyDown) HandleKeyDown(scanCode);
-                        else if (message is WmKeyUp or WmSysKeyUp) HandleKeyUp(scanCode);
-                        else return CallNextHookEx(_hook, code, wParam, lParam);
+                        bool handled;
+                        if (message is WmKeyDown or WmSysKeyDown)
+                            handled = HandleKeyDown(scanCode);
+                        else if (message is WmKeyUp or WmSysKeyUp)
+                            handled = HandleKeyUp(scanCode);
+                        else
+                            return CallNextHookEx(_hook, code, wParam, lParam);
 
-                        // Consume physical WASD event; send only the resolved priority key.
-                        return new IntPtr(1);
+                        // If Windows refuses synthesized input (e.g. UIPI/integrity mismatch),
+                        // pass the physical event through instead of swallowing the user's key.
+                        if (handled) return new IntPtr(1);
                     }
                 }
             }
@@ -88,28 +94,55 @@ public sealed class GlobalSnapTapService : IDisposable
         return CallNextHookEx(_hook, code, wParam, lParam);
     }
 
-    private void HandleKeyDown(ushort scanCode)
+    private bool HandleKeyDown(ushort scanCode)
     {
-        if (!_physicalKeysDown.Add(scanCode)) return; // Ignore OS key-repeat events.
+        if (!_physicalKeysDown.Add(scanCode)) return true; // Consume OS key-repeat events.
 
         var opposite = OppositeScanCode(scanCode);
-        if (_syntheticKeysDown.Remove(opposite)) SendKey(opposite, keyUp: true);
-        if (_syntheticKeysDown.Add(scanCode)) SendKey(scanCode, keyUp: false);
+        if (_syntheticKeysDown.Contains(opposite))
+        {
+            if (!SendKey(opposite, keyUp: true))
+            {
+                _physicalKeysDown.Remove(scanCode);
+                return false;
+            }
+            _syntheticKeysDown.Remove(opposite);
+        }
+
+        if (!SendKey(scanCode, keyUp: false))
+        {
+            _physicalKeysDown.Remove(scanCode);
+            return false;
+        }
+        _syntheticKeysDown.Add(scanCode);
+        return true;
     }
 
-    private void HandleKeyUp(ushort scanCode)
+    private bool HandleKeyUp(ushort scanCode)
     {
-        _physicalKeysDown.Remove(scanCode);
-        if (!_syntheticKeysDown.Remove(scanCode)) return;
+        if (!_physicalKeysDown.Contains(scanCode)) return false;
 
-        SendKey(scanCode, keyUp: true);
+        if (_syntheticKeysDown.Contains(scanCode))
+        {
+            if (!SendKey(scanCode, keyUp: true))
+            {
+                _physicalKeysDown.Remove(scanCode);
+                return false;
+            }
+            _syntheticKeysDown.Remove(scanCode);
+        }
+
+        _physicalKeysDown.Remove(scanCode);
         var fallback = OppositeScanCode(scanCode);
-        if (_physicalKeysDown.Contains(fallback) && _syntheticKeysDown.Add(fallback))
-            SendKey(fallback, keyUp: false);
+        if (_physicalKeysDown.Contains(fallback) && !_syntheticKeysDown.Contains(fallback))
+        {
+            if (SendKey(fallback, keyUp: false))
+                _syntheticKeysDown.Add(fallback);
+        }
+        return true;
     }
 
-    private static bool IsDirection(ushort scanCode) =>
-        scanCode is ScanA or ScanD or ScanW or ScanS;
+    private static bool IsDirection(ushort scanCode) => scanCode is ScanA or ScanD or ScanW or ScanS;
 
     private static ushort OppositeScanCode(ushort scanCode) => scanCode switch
     {
@@ -120,7 +153,7 @@ public sealed class GlobalSnapTapService : IDisposable
         _ => 0
     };
 
-    private static void SendKey(ushort scanCode, bool keyUp)
+    private static bool SendKey(ushort scanCode, bool keyUp)
     {
         var flags = KeyeventfScancode | (keyUp ? KeyeventfKeyup : 0);
         var input = new Input
@@ -128,7 +161,7 @@ public sealed class GlobalSnapTapService : IDisposable
             Type = 1,
             Union = new InputUnion { Keyboard = new KeyboardInput { ScanCode = scanCode, Flags = flags } }
         };
-        SendInput(1, new[] { input }, Marshal.SizeOf<Input>());
+        return SendInput(1, new[] { input }, Marshal.SizeOf<Input>()) == 1;
     }
 
     public void Dispose()
